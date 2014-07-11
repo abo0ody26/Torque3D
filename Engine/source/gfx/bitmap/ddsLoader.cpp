@@ -80,6 +80,7 @@ enum DDSCapFlags
 #define FOURCC_DXT3  (MakeFourCC('D','X','T','3'))
 #define FOURCC_DXT4  (MakeFourCC('D','X','T','4'))
 #define FOURCC_DXT5  (MakeFourCC('D','X','T','5'))
+#define FOURCC_BC5   (MakeFourCC('A','T','I','2'))
 
 DDSFile::DDSFile( const DDSFile &dds )
    :  mFlags( dds.mFlags ),
@@ -140,6 +141,7 @@ U32 DDSFile::getSurfacePitch( U32 mipLevel ) const
       case GFXFormatDXT3:
       case GFXFormatDXT4:
       case GFXFormatDXT5:
+      case GFXFormatBC5:
          sizeMultiple = 16;
          break;
       default:
@@ -179,6 +181,7 @@ U32 DDSFile::getSurfaceSize( U32 height, U32 width, U32 mipLevel ) const
       case GFXFormatDXT3:
       case GFXFormatDXT4:
       case GFXFormatDXT5:
+      case GFXFormatBC5:
          sizeMultiple = 16;
          break;
       default:
@@ -208,7 +211,7 @@ U32 DDSFile::getSizeInBytes() const
 
 U32 DDSFile::getSizeInBytes( GFXFormat format, U32 height, U32 width, U32 mipLevels )
 {
-   AssertFatal( format >= GFXFormatDXT1 && format <= GFXFormatDXT5, 
+   AssertFatal( format >= GFXFormatDXT1 && format <= GFXFormatBC5, 
       "DDSFile::getSizeInBytes - Must be a DXT format!" );
 
    // From the directX docs:
@@ -504,6 +507,9 @@ bool DDSFile::readHeader(Stream &s)
       case FOURCC_DXT5:
          mFormat = GFXFormatDXT5;
          break;
+      case FOURCC_BC5:
+         mFormat = GFXFormatBC5;
+         break;
       default:
          Con::errorf("DDSFile::readHeader - unknown fourcc = '%c%c%c%c'", ((U8*)&pfFourCC)[0], ((U8*)&pfFourCC)[1], ((U8*)&pfFourCC)[2], ((U8*)&pfFourCC)[3]);
          break;
@@ -679,6 +685,8 @@ bool DDSFile::writeHeader( Stream &s )
          fourCC = FOURCC_DXT3;
       if (mFormat == GFXFormatDXT5)
          fourCC = FOURCC_DXT5;
+      if (mFormat == GFXFormatBC5)
+         fourCC = FOURCC_BC5;
    }
    else
       ddpfFlags = mBytesPerPixel == 4 ? DDPFRGB | DDPFAlphaPixels : DDPFRGB;

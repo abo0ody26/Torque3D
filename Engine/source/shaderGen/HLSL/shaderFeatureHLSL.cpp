@@ -146,7 +146,7 @@ LangElement *ShaderFeatureHLSL::expandNormalMap(   LangElement *sampleNormalOp,
 {
    MultiLine *meta = new MultiLine;
 
-   if ( fd.features.hasFeature( MFT_IsDXTnm, getProcessIndex() ) )
+   if ( fd.features.hasFeature( MFT_IsDXTnm, getProcessIndex() ) || fd.features.hasFeature( MFT_IsBC5nm, getProcessIndex() ) )
    {
       if ( fd.features[MFT_ImposterVert] )
       {
@@ -156,8 +156,18 @@ LangElement *ShaderFeatureHLSL::expandNormalMap(   LangElement *sampleNormalOp,
       }
       else
       {
-         // DXT Swizzle trick
-         meta->addStatement( new GenOp( "   @ = float4( @.ag * 2.0 - 1.0, 0.0, 0.0 ); // DXTnm\r\n", normalDecl, sampleNormalOp ) );
+         // Swizzle tricks
+         // BC5
+         if( fd.features.hasFeature( MFT_IsBC5nm, getProcessIndex() ))
+         {
+            meta->addStatement( new GenOp( "   @ = float4( @.rg * 2.0 - 1.0, 0.0, 0.0 ); // DXTnm\r\n", normalDecl, sampleNormalOp ) );
+         }
+         // DXT5
+         else 
+         {
+            meta->addStatement( new GenOp( "   @ = float4( @.ag * 2.0 - 1.0, 0.0, 0.0 ); // DXTnm\r\n", normalDecl, sampleNormalOp ) );            
+         }
+         // re-create z
          meta->addStatement( new GenOp( "   @.z = sqrt( 1.0 - dot( @.xy, @.xy ) ); // DXTnm\r\n", normalVar, normalVar, normalVar ) );
       }
    }

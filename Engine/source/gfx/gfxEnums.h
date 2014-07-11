@@ -203,6 +203,7 @@ enum GFXFormat
    GFXFormatDXT3,
    GFXFormatDXT4,
    GFXFormatDXT5,
+   GFXFormatBC5,
 
    GFXFormat_COUNT,
 

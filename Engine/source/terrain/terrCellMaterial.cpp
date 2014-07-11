@@ -399,8 +399,11 @@ bool TerrainCellMaterial::_createPass( Vector<MaterialInfo*> *materials,
             normalMaps.last().set( mat->getNormalMap(), 
                &GFXDefaultStaticNormalMapProfile, "TerrainCellMaterial::_createPass() - NormalMap" );
 
-            if ( normalMaps.last().getFormat() == GFXFormatDXT5 )
+            GFXFormat normalFmt = normalMaps.last().getFormat();
+            if (normalFmt == GFXFormatDXT5 )
                features.addFeature( MFT_IsDXTnm, featureIndex );
+            else if(normalFmt == GFXFormatBC5 )
+               features.addFeature( MFT_IsBC5nm, featureIndex );
 
             // Do we need and can we do parallax mapping?
             if (  !disableParallaxMaps &&

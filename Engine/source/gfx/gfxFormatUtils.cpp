@@ -72,6 +72,7 @@ GFXFormatInfo::Data GFXFormatInfo::smFormatInfos[ GFXFormat_COUNT ] =
    GFXFormatInfo::Data( 0,    true,  true,  false ),   // GFXFormatDXT3
    GFXFormatInfo::Data( 0,    true,  true,  false ),   // GFXFormatDXT4
    GFXFormatInfo::Data( 0,    true,  true,  false ),   // GFXFormatDXT5
+   GFXFormatInfo::Data( 0,    false,  true,  false ),   // GFXFormatBC5
 };
 
 //-----------------------------------------------------------------------------

@@ -329,7 +329,7 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, GBitmap *pD
    const bool supportsAutoMips = GFX->getCardProfiler()->queryProfile("autoMipMapLevel", true);
 
    // Helper bool
-   const bool isCompressedTexFmt = aTexture->mFormat >= GFXFormatDXT1 && aTexture->mFormat <= GFXFormatDXT5;
+   const bool isCompressedTexFmt = aTexture->mFormat >= GFXFormatDXT1 && aTexture->mFormat <= GFXFormatBC5;
 
    GFXD3D9Device* dev = static_cast<GFXD3D9Device *>(GFX);
 
@@ -606,8 +606,8 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dd
          D3D9Assert( surf->LockRect( &lockedRect, NULL, 0 ), "Failed to lock surface level for load" );
 
          AssertFatal( dds->mSurfaces.size() > 0, "Assumption failed. DDSFile has no surfaces." );
-
-         if ( dds->getSurfacePitch( i ) != lockedRect.Pitch )
+         //BC5 will return the wrong pitch in D3D9 because BC5 is not a native format and D3D9 has no idea it's a compressed format
+         if ( dds->getSurfacePitch( i ) != lockedRect.Pitch && !dds->mFormat == GFXFormatBC5 )
          {
             // Do a row-by-row copy.
             U32 srcPitch = dds->getSurfacePitch( i );

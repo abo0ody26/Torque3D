@@ -85,7 +85,8 @@ DeclareFeatureType( MFT_IsSinglePassParaboloid );
 
 /// This feature does normal map decompression for DXT1/5.
 DeclareFeatureType( MFT_IsDXTnm );
-
+/// This feature does BC5 (3Dc) normal map decompression
+DeclareFeatureType( MFT_IsBC5nm );
 DeclareFeatureType( MFT_TexAnim );
 DeclareFeatureType( MFT_Parallax );
 

@@ -382,7 +382,10 @@ void ProcessedShaderMaterial::_determineFeatures(  U32 stageNum,
    {   
       if (  mStages[stageNum].getTex( MFT_NormalMap )->mFormat == GFXFormatDXT5 &&   
            !mStages[stageNum].getTex( MFT_NormalMap )->mHasTransparency )   
-         fd.features.addFeature( MFT_IsDXTnm );   
+         fd.features.addFeature( MFT_IsDXTnm );
+      else if (  mStages[stageNum].getTex( MFT_NormalMap )->mFormat == GFXFormatBC5 &&   
+           !mStages[stageNum].getTex( MFT_NormalMap )->mHasTransparency )   
+         fd.features.addFeature( MFT_IsBC5nm );
    }
 
    // Now for some more advanced features that we 
