@@ -214,6 +214,7 @@ void GFXD3D9TextureManager::_innerCreateTexture( GFXD3D9TextureObject *retTex,
          HRESULT res = D3DERR_INVALIDCALL;
          if( fastCreate )
          {
+            //TODO: If this is a 3Dc/BC5 texture, check if it is actually supported, if not perhaps convert to DXT5_xGxR format in realtime
             res = mD3DDevice->CreateTexture(width, height, numMipLevels, usage, d3dTextureFormat, pool, retTex->get2DTexPtr(), NULL);
          }
 
@@ -606,8 +607,9 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dd
          D3D9Assert( surf->LockRect( &lockedRect, NULL, 0 ), "Failed to lock surface level for load" );
 
          AssertFatal( dds->mSurfaces.size() > 0, "Assumption failed. DDSFile has no surfaces." );
-         //BC5 will return the wrong pitch in D3D9 because BC5 is not a native format and D3D9 has no idea it's a compressed format
-         if ( dds->getSurfacePitch( i ) != lockedRect.Pitch && !dds->mFormat == GFXFormatBC5 )
+         const bool bc5 = dds->mFormat == GFXFormatBC5;
+         //BC5 will return the wrong pitch with a D3D9 surface
+         if ( dds->getSurfacePitch( i ) != lockedRect.Pitch && !bc5)
          {
             // Do a row-by-row copy.
             U32 srcPitch = dds->getSurfacePitch( i );
@@ -624,11 +626,11 @@ bool GFXD3D9TextureManager::_loadTexture(GFXTextureObject *aTexture, DDSFile *dd
             surf->Release();
 
             return true;
-         }
-
+         }         
+      
          dMemcpy( lockedRect.pBits, dds->mSurfaces[0]->mMips[i], dds->getSurfaceSize(i) );
-
          surf->UnlockRect();
+
       }
 #endif
 
