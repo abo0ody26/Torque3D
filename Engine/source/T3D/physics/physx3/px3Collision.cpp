@@ -194,9 +194,9 @@ bool Px3Collision::addHeightfield(   const U16 *heights,
 
 		int flag = ( column + tess ) % 2;
 		if(flag)
-			currentSample->setTessFlag();
-		else
 			currentSample->clearTessFlag();
+		else
+			currentSample->setTessFlag();
 
          currentByte += heightFieldDesc.samples.stride;    
       }
@@ -214,6 +214,8 @@ bool Px3Collision::addHeightfield(   const U16 *heights,
 	desc->pose = pose2;
 
 	mColShapes.push_back(desc);
+
+   SAFE_DELETE(samples);
 	return true;
 }
 
@@ -262,9 +264,9 @@ bool Px3Collision::addHeightfield(  const U16 *heights,
 
 		int flag = ( column + tess ) % 2;
 		if(flag)
-			currentSample->setTessFlag();
-		else
 			currentSample->clearTessFlag();
+		else
+			currentSample->setTessFlag();
 
          currentByte += heightFieldDesc.samples.stride;    
       }
@@ -290,5 +292,6 @@ bool Px3Collision::addHeightfield(  const U16 *heights,
       desc->materials.push_back(physxMat);
    }
 
+   SAFE_DELETE(samples);
 	return true;
 }
