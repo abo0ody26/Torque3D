@@ -50,8 +50,8 @@ physx::PxDefaultCpuDispatcher* Px3World::smCpuDispatcher=NULL;
 Px3ConsoleStream* Px3World::smErrorCallback = NULL;
 physx::PxVisualDebuggerConnection* Px3World::smPvdConnection=NULL;
 physx::PxDefaultAllocator Px3World::smMemoryAlloc;
-//Physics timing
-F32 Px3World::smPhysicsStepTime = 1.0f/(F32)TickMs;
+//Physics timing - fairly low, consider using 1/60.f
+F32 Px3World::smPhysicsStepTime = 1.0f/32.0f;
 U32 Px3World::smPhysicsMaxIterations = 4;
 
 //filter shader with support for CCD pairs
@@ -234,7 +234,10 @@ bool Px3World::initWorld( bool isServer, ProcessList *processList )
 	sceneDesc.userData = this;
 	if(!sceneDesc.cpuDispatcher)
 	{
-		smCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(PHYSICSMGR->getThreadCount());
+      //create shared cpu dispatcher
+      if(!smCpuDispatcher)
+		   smCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(PHYSICSMGR->getThreadCount());
+
 		sceneDesc.cpuDispatcher = smCpuDispatcher;
 		Con::printf("PhysX3 using Cpu: %d workers", smCpuDispatcher->getWorkerCount());
 	}
