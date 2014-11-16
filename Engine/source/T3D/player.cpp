@@ -359,6 +359,7 @@ PlayerData::PlayerData()
    decalID        = 0;
    decalOffset      = 0.0f;
 
+   actionCount = 0;
    lookAction = 0;
 
    // size of bounding box
@@ -490,10 +491,6 @@ bool PlayerData::preload(bool server, String &errorStr)
          dp->death         = false;
          if (dp->sequence != -1)
             getGroundInfo(si,thread,dp);
-
-         // No real reason to spam the console about a missing jet animation
-         if (dStricmp(sp->name, "jet") != 0)
-            AssertWarn(dp->sequence != -1, avar("PlayerData::preload - Unable to find named animation sequence '%s'!", sp->name));
       }
       for (S32 b = 0; b < mShape->sequences.size(); b++)
       {
@@ -3716,7 +3713,7 @@ bool Player::setActionThread(const char* sequence,bool hold,bool wait,bool fsp)
 
 void Player::setActionThread(U32 action,bool forward,bool hold,bool wait,bool fsp, bool forceSet)
 {
-   if (!mDataBlock || (mActionAnimation.action == action && mActionAnimation.forward == forward && !forceSet))
+   if (!mDataBlock || !mDataBlock->actionCount || (mActionAnimation.action == action && mActionAnimation.forward == forward && !forceSet))
       return;
 
    if (action >= PlayerData::NumActionAnims)
